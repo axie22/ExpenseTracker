@@ -9,6 +9,10 @@ users = db['users']
 expenses = db['expenses']
 
 def create_user(username, email, hash_password):
+    """
+    Create a new user with a username, eamil, and hashed password
+    Return the id of the newly inserted value
+    """
     user = {
         "username": username,
         "email": email,
@@ -18,12 +22,34 @@ def create_user(username, email, hash_password):
     return users.insert_one(user).inserted_id
 
 def delete_user(user_id):
-    # returns 1 if successful, 0 otherwise
+    """
+    Delete the user using the user_id
+    Return 1 if succesful, 0 otherwise
+    """
     return users.delete_one({"_id": ObjectId(user_id)})
 
+
 def find_username(email):
+    """Find the username given the email address and return it"""
     return users.find_one({"email": email})
 
+def create_expense(user_id, category, price, date=None):
+    """Create an expense given a user id
+    Categorize it and also add the price and date of purchase
+    Return the id of the inserted element
+    """
+    expense = {
+        "user_id": user_id, 
+        "amount": price,
+        "category": category,
+        "date": date if date else datetime.now()
+    }
+    return expenses.insert_one(expense).inserted_id
+
+def delete_expense(user_id, category, price):
+    """Delete an expense using a given user_id? Or should we use the inserted_id
+    """
+    return expenses.delete_one({""})
 '''
 
 users.insert_one({
