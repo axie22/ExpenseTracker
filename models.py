@@ -46,24 +46,19 @@ def create_expense(user_id, category, price, date=None):
     }
     return expenses.insert_one(expense).inserted_id
 
-def delete_expense(user_id, category, price):
-    """Delete an expense using a given user_id? Or should we use the inserted_id
-    """
-    return expenses.delete_one({""})
-'''
+def delete_expense(expense_id):
+    """Delete an expense by its ID."""
+    return expenses.delete_one({"_id": ObjectId(expense_id)})
 
-users.insert_one({
-    "username": "testuser",
-    "email": "testuser@example.com",
-    "password": "hashed_password",
-    "created_at": datetime.now()
-})
+def get_expenses_by_user(user_id, filter_query=None):
+    query = {"user_id": ObjectId(user_id)}
+    if filter_query:
+        query.update(filter_query)
+    return query
 
-expenses.insert_one({
-    "user_id": "mongo_user_id",
-    "amount": 50.0,
-    "category": "Groceries",
-    "date": datetime.now(),
-})
-
-'''
+def update_expense(expense_id, updated_data):
+    """Update an existing expense."""
+    return expenses.update_one(
+        {"_id": ObjectId(expense_id)},
+        {"$set": updated_data}
+    )
