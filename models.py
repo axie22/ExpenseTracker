@@ -1,8 +1,13 @@
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from datetime import datetime
+import os
+from pymongo import MongoClient
+from dotenv import load_dotenv
 
-client = MongoClient('mongodb://localhost:27017/')
+load_dotenv()
+mongodb_uri = os.getenv('MONGODB_URI')
+client = MongoClient(mongodb_uri)
 db = client['expense_tracker']
 
 users = db['users']  

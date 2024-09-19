@@ -9,7 +9,12 @@
 
 ## Setup <a name="setup"></a>
 
-Create a virtual environment
+1. Create a virtual environment
 
 Mac: `python3 -m venv venv` \
 Windows: `python -m venv venv`
+
+2. Activate the Virtual Environment
+
+Mac: `source venv/bin/activate`\
+Windows: `venv\Scripts\activate`
