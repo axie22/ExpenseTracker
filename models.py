@@ -2,6 +2,7 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 from datetime import datetime
 import os
+from bson.binary import Binary
 from pymongo import MongoClient
 from dotenv import load_dotenv
 
@@ -21,7 +22,7 @@ def create_user(username, email, hash_password):
     user = {
         "username": username,
         "email": email,
-        "password": hash_password,
+        "password": Binary(hash_password),
         "created_at": datetime.now()
     }
     return users.insert_one(user).inserted_id
@@ -44,7 +45,7 @@ def create_expense(user_id, category, price, date=None):
     Return the id of the inserted element
     """
     expense = {
-        "user_id": user_id, 
+        "user_id": ObjectId(user_id), 
         "amount": price,
         "category": category,
         "date": date if date else datetime.now()
@@ -55,15 +56,23 @@ def delete_expense(expense_id):
     """Delete an expense by its ID."""
     return expenses.delete_one({"_id": ObjectId(expense_id)})
 
-def get_expenses_by_user(user_id, filter_query=None):
+def get_expenses_by_user(user_id):
+    """ Retrieve expenses for a specific user and convert ObjectIds to strings.
+    """
     query = {"user_id": ObjectId(user_id)}
-    if filter_query:
-        query.update(filter_query)
-    return query
+    user_expenses = list(expenses.find(query))
+
+    # Convert ObjectId to string for each expense document
+    for expense in user_expenses:
+        expense['_id'] = str(expense['_id'])
+        expense['user_id'] = str(expense['user_id'])
+
+    return user_expenses
+
 
 def update_expense(expense_id, updated_data):
     """Update an existing expense."""
     return expenses.update_one(
         {"_id": ObjectId(expense_id)},
         {"$set": updated_data}
-    )
+    ).matched_count
