@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_jwt_extended import create_access_token, JWTManager
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
+from bson.binary import Binary
 import bcrypt
 from models import users
 
@@ -17,7 +18,7 @@ def signup():
     user = {
         "username": data['username'],
         "email": data['email'],
-        "password": hashed_password,
+        "password": Binary(hashed_password),
         "created_at": datetime.now()
     }
 
@@ -28,8 +29,11 @@ def signup():
 def login():
     data = request.get_json()
     user = users.find_one({"email": data['email']})
+    
+    if not user:
+        return jsonify({"error": "Invalid email or password"}), 401
 
-    if not user or not bcrypt.checkpw(data['password'].encode('utf-8'), user['password']):
+    if not bcrypt.checkpw(data['password'].encode('utf-8'), user['password']):
         return jsonify({"error": "Invalid email or password"}), 401
 
     access_token = create_access_token(identity=str(user['_id']))
