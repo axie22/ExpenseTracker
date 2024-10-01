@@ -54,7 +54,7 @@ def add_expense():
     data = request.get_json()
 
     # Create expense using the create_expense function in models.py
-    expense_id = create_expense(user_id, data['category'], data['price'], data.get('date'))
+    expense_id = create_expense(user_id, data['category'], data['amount'], data.get('date'))
     
     return jsonify({"message": "Expense added successfully!", "expense_id": str(expense_id)}), 201
 

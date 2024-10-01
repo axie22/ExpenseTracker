@@ -49,14 +49,14 @@ def login():
 def add_expense():
     token = load_token()
     category = input("Enter category (e.g., groceries, electronics, etc.): ")
-    amount = input("Enter amount: ")
+    price = input("Enter amount: ")
     headers = {"Authorization": f"Bearer {token}"}
-    data = {"category": category, "amount": amount}
+    data = {"category": category, "amount": price}
     response = requests.post(f"{BASE_URL}/expenses", json=data, headers=headers)
     
     print("Status Code:", response.status_code)
-    if response.status_code == 200:
-        print("Expense added successfully:", response.json())
+    if response.status_code == 201:
+        print("Expense added successfully:")
     else:
         print("Error:", response.text)
 
