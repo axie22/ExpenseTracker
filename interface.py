@@ -1,5 +1,6 @@
 import requests
 import json
+import os
 
 BASE_URL = "http://127.0.0.1:5000"
 TOKEN_FILE = "token.txt" 
@@ -78,31 +79,50 @@ def get_expenses():
     else:
         print("Error:", response.json())
 
+def is_logged_in():
+    """Check if the user is logged in by verifying the existence of a saved token."""
+    token = load_token()
+    return token is not None
+
+def logout():
+    """Log the user out by deleting the saved token."""
+    try:
+        os.remove(TOKEN_FILE)
+        print("You have been logged out.")
+    except FileNotFoundError:
+        print("No active session found.")
+
 def main():
     """Main terminal interface."""
     while True:
-        print("\nExpense Tracker")
-        print("1. Sign Up")
-        print("2. Log In")
-        print("3. Add Expense")
-        print("4. View Expenses")
-        print("5. Quit")
+        if is_logged_in():
+            print("\nExpense Tracker")
+            print("1. Add Expense")
+            print("2. View Expenses")
+            print("3. Logout")
+        else:
+            print("\nExpense Tracker")
+            print("1. Sign Up")
+            print("2. Log in")
 
         choice = input("Select an option: ")
 
-        if choice == "1":
-            signup()
-        elif choice == "2":
-            login()
-        elif choice == "3":
-            add_expense()
-        elif choice == "4":
-            get_expenses()
-        elif choice == "5":
-            print("Goodbye!")
-            break
+        if is_logged_in():
+            if choice == "1":
+                add_expense()
+            elif choice == "2":
+                get_expenses()
+            elif choice == "3":
+                logout()
+            else:
+                print("Invalid option. Please try again.")
         else:
-            print("Invalid option. Please try again.")
+            if choice == "1":
+                signup()
+            elif choice == "2":
+                login()
+            else:
+                print("Invalid Option. Try again")
 
 if __name__ == "__main__":
     main()
