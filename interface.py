@@ -1,6 +1,8 @@
 import requests
 import json
 import os
+import getpass
+
 
 BASE_URL = "http://127.0.0.1:5000"
 TOKEN_FILE = "token.txt" 
@@ -22,7 +24,7 @@ def signup():
     """Sign up a new user."""
     username = input("Enter username: ")
     email = input("Enter email: ")
-    password = input("Enter password: ")
+    password = getpass.getpass("Enter password: ")
 
     data = {"username": username, "email": email, "password": password}
     response = requests.post(f"{BASE_URL}/signup", json=data)
@@ -35,8 +37,8 @@ def signup():
 def login():
     """Log in a user."""
     email = input("Enter email: ")
-    password = input("Enter password: ")
-
+    password = getpass.getpass("Enter password: ")
+    
     data = {"email": email, "password": password}
     response = requests.post(f"{BASE_URL}/login", json=data)
 
